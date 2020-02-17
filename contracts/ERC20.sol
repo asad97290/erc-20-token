@@ -33,7 +33,7 @@ abstract contract ERC20 is ERC20Interface{
         return true;
     }
     function approve(address spender, uint tokens) override public returns(bool success) {
-        require((token == 0) || (allownce[msg.sender][spender] == 0));
+        require((tokens == 0) || (allownce[msg.sender][spender] == 0));
         allownce[msg.sender][spender] += tokens;
         emit Approval(msg.sender, spender,tokens);
         return true;

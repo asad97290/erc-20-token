@@ -39,6 +39,9 @@ abstract contract ERC20 is ERC20Interface{
         return true;
 
     }
+    function allowance(address owner, address spender) override public view returns(uint){
+        return allownce[owner][spender];
+    }
     function transferFrom(address from, address to, uint tokens) override public returns(bool success) {
         require(balances[from] >= tokens);
         require(allownce[from][msg.sender] >= tokens);

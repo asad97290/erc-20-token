@@ -19,10 +19,10 @@ abstract contract ERC20 is ERC20Interface{
         tdecimals = _decimals;
     }
     
-    function name() public view returns(string memory) { return tName;}
-    function symbol() public view returns(string memory) { return tSymbol;}
-    function totalsupply() public view returns(uint256) { return tTotalSupply;}
-    function decimals() public view returns(uint256) { return tdecimals;}
+    function name() override public view returns(string memory) { return tName;}
+    function symbol() override public view returns(string memory) { return tSymbol;}
+    function totalSupply()override  public view returns(uint256) { return tTotalSupply;}
+    function decimals() override public view returns(uint256) { return tdecimals;}
 
     function balanceOf(address tokenOwner) override public view returns(uint256){ return balances[tokenOwner]; }
 

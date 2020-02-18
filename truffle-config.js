@@ -23,7 +23,7 @@
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
- const mnemonic = 'file problem relax quality spike swim owner swamp key damage clever faculty green lawn aware';
+ const mnemonic = 'afford sign error blade exist tuition athlete betray buffalo future twist sunny';
 
 module.exports = {
   /**
@@ -92,11 +92,11 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-       version: "0.6.2",    // Fetch exact version from solc-bin (default: truffle's version)
+       version: "^0.6.1",    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {
-      //    enabled: false,
+      //    enabled: true,
       //    runs: 200
       //  },
       //  evmVersion: "byzantium"

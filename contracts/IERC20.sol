@@ -1,6 +1,6 @@
 pragma solidity ^0.6.1;
 
-interface ERC20Interface {
+interface ERC20TokenInterface {
     function totalSupply() external view returns (uint);
     function name() external view returns (string memory);
     function symbol() external view returns (string memory);

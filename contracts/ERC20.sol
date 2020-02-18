@@ -1,8 +1,8 @@
 pragma solidity ^0.6.1;
 
-import {ERC20Interface} from './IERC20.sol';
+import {ERC20TokenInterface} from './IERC20.sol';
 
-abstract contract ERC20 is ERC20Interface{
+contract ERC20 is ERC20TokenInterface{
     string internal tName;
     string internal tSymbol;
     uint256 internal tTotalSupply;

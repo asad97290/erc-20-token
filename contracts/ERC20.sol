@@ -18,6 +18,7 @@ abstract contract ERC20 is ERC20Interface{
         tTotalSupply = _totalSupply;
         tdecimals = _decimals;
     }
+    
     function name() public view returns(string memory) { return tName;}
     function symbol() public view returns(string memory) { return tSymbol;}
     function totalsupply() public view returns(uint256) { return tTotalSupply;}

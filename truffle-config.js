@@ -23,7 +23,7 @@
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
- const mnemonic = 'afford sign error blade exist tuition athlete betray buffalo future twist sunny';
+ const mnemonic = 'maximum venture crew over author weird swamp correct giggle floor kit arch';
 
 module.exports = {
   /**
@@ -45,7 +45,7 @@ module.exports = {
     //
     // ropsten: {
     //   provider: function() {
-    //     return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/v3/b7698cc646324f809741abe49dcbfade")
+    //     return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/v3/0484c2c2e85045128cfef2e24ff015f7")
     //   },
     //   network_id: 3
     // }
@@ -68,7 +68,7 @@ module.exports = {
     // Useful for deploying to a public network.
     // NB: It's important to wrap the provider as a function.
     ropsten: {
-      provider: () => new HDWalletProvider(mnemonic, `https://ropsten.infura.io/v3/b7698cc646324f809741abe49dcbfade`),
+      provider: () => new HDWalletProvider(mnemonic, "https://ropsten.infura.io/v3/0484c2c2e85045128cfef2e24ff015f7"),
       network_id: 3,       // Ropsten's id
       gas: 5500000,        // Ropsten has a lower block limit than mainnet
       confirmations: 2,    // # of confs to wait between deployments. (default: 0)

@@ -7,6 +7,8 @@ contract ERC20 is ERC20TokenInterface{
     string internal tSymbol;
     uint256 internal tTotalSupply;
     uint256 internal  tdecimals;
+    uint256 internal price = 100000000000000;
+    address internal owner;
 
     mapping(address => uint256) balances;
     mapping(address => mapping(address => uint256)) allownce;
@@ -15,8 +17,14 @@ contract ERC20 is ERC20TokenInterface{
         tName = _tokenName;
         tSymbol = _symbol;
         balances[msg.sender] += _totalSupply;
-        tTotalSupply = _totalSupply;
+        tTotalSupply = _totalSupply* 10**uint256(_decimals);
         tdecimals = _decimals;
+        owner = msg.sender;
+    }
+    
+    modifier onlyOwner() {
+        require(msg.sender == owner, "only owner can call this method");
+        _;
     }
     
     function name() override public view returns(string memory) { return tName;}
@@ -40,8 +48,8 @@ contract ERC20 is ERC20TokenInterface{
         return true;
 
     }
-    function allowance(address owner, address spender) override public view returns(uint){
-        return allownce[owner][spender];
+    function allowance(address _owner, address spender) override public view returns(uint){
+        return allownce[_owner][spender];
     }
     function transferFrom(address from, address to, uint tokens) override public returns(bool success) {
         require(balances[from] >= tokens);
@@ -51,7 +59,18 @@ contract ERC20 is ERC20TokenInterface{
         allownce[from][msg.sender] -= tokens;
         emit Transfer(from,to,tokens);
         return true;
-
+        
+    }
+    
+    function send_token()  public payable returns(bool) {
+        require(msg.value > 0 ether, "invailed amount");
+        require(tx.origin == msg.sender,"should be external owned account");
+        uint wei_unit = (1*10**18)/price;
+        uint final_price = msg.value * wei_unit;
+        balances[owner] -= final_price;
+        balances[msg.sender] += final_price;
+        address(uint160(owner)).transfer(msg.value);
+        return true;
     }
 
 }

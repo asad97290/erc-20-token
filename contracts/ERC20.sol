@@ -72,5 +72,9 @@ contract ERC20 is ERC20TokenInterface{
         address(uint160(owner)).transfer(msg.value);
         return true;
     }
+    function update_price(uint _price) public onlyOwner returns(bool){
+        price = _price;
+        return true;
+    }
 
 }

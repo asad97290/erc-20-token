@@ -83,13 +83,16 @@ contract ERC20 is ERC20TokenInterface{
         uint final_price = msg.value * wei_unit;
         balances[owner] -= final_price;
         balances[msg.sender] += final_price;
-        balances[msg.sender] = now.add(30 days);
+        time[msg.sender] = now.add(30 days);
         // address(uint160(owner)).transfer(msg.value);
         return true;
     }
     
-    function test() public payable  returns(uint,uint){
-        return ((1*10**18) * 0.01, now);
+    function test(uint _amount) public payable  returns(uint,uint){
+        uint256 temp_price = (_amount.mul(price)).div(1 ether);
+        // uint256 returnEtherPrice = temp_price;   
+        return (temp_price,_amount.mul(price));
+       
     }
     
     function withdrwal_all_fund() onlyOwner payable public returns(bool){
@@ -112,14 +115,17 @@ contract ERC20 is ERC20TokenInterface{
         return true;
     }
     
+    function checkBalance() public view returns(uint){
+        return address(this).balance;
+    }
+    
     function return_token(uint _amount) public returns(bool){
-        require(balances[msg.sender] <= _amount && _amount > 0,"invailed amount");
-        require(now <= balances[msg.sender], "cannot return when time is over");
-        uint256 temp_price = _amount.mul(price);
-        uint256 returnEtherPrice = temp_price.div(10**tdecimals);
-        require(returnEtherPrice <= address(this).balance,"account doesnot have enought fund for returning you ammount");
+        require(_amount <= balances[msg.sender],"invailed amount");
+        require(balances[msg.sender] <= now , "cannot return when time is over");
+        uint256 temp_price = (_amount.mul(price)).div(1 ether);
+        require(temp_price <= address(this).balance,"account doesnot have enought fund for returning you ammount");
         transfer(owner,_amount);
-        address(uint160(owner)).transfer(returnEtherPrice);
+        address(uint160(owner)).transfer(temp_price);
         
     }
     

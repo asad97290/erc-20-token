@@ -17,14 +17,14 @@ contract ERC20 is ERC20TokenInterface{
     mapping(address => mapping(address => uint256)) allownce;
     mapping(address => uint256) time;
 
-    constructor(string memory _tokenName,string memory _symbol,uint256 _totalSupply,uint256 _decimals, uint _priceInEther)public{
+    constructor(string memory _tokenName,string memory _symbol,uint256 _totalSupply,uint256 _decimals, uint _priceInWei)public{
         tName = _tokenName;
         tSymbol = _symbol;
         balances[msg.sender] += _totalSupply;
         tTotalSupply = _totalSupply* 10**uint256(_decimals);
         tdecimals = _decimals;
         owner = msg.sender;
-        price = _priceInEther* 10**18 ;
+        price = _priceInWei;
     }
     
     modifier onlyOwner() {
@@ -75,8 +75,8 @@ contract ERC20 is ERC20TokenInterface{
         require(msg.value > 0 ether, "invailed amount");
         require(tx.origin == msg.sender,"should be external owned account");
         uint wei_unit = (1*10**18)/price;
-        uint final_price = msg.value.mul(wei_unit);
-        balances[owner] = balances[owner].sub(final_price);
+        uint final_price = msg.value * wei_unit;
+        balances[owner] = balances[owner].add(final_price);
         balances[msg.sender] = balances[msg.sender].add(final_price);
         time[msg.sender] = now.add(30 days);
         // address(uint160(owner)).transfer(msg.value);
@@ -91,6 +91,7 @@ contract ERC20 is ERC20TokenInterface{
         delegatedAddres = _addres;
         return true;
     }
+    
     
     function update_price(uint _price) public returns(bool){
         require(msg.sender == owner || msg.sender == delegatedAddres, "only special account are allowed");
@@ -109,7 +110,7 @@ contract ERC20 is ERC20TokenInterface{
     
     function return_token(uint _amount) public returns(bool){
         require(_amount <= balances[msg.sender],"invailed amount");
-        require(balances[msg.sender] <= now , "cannot return when time is over");
+        require(time[msg.sender] >= now , "cannot return when time is over");
         uint256 temp_price = (_amount.mul(price)).div(1 ether);
         require(temp_price <= address(this).balance,"account doesnot have enought fund for returning you ammount");
         transfer(owner,_amount);

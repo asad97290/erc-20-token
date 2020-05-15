@@ -91,13 +91,7 @@ contract ERC20 is ERC20TokenInterface{
         delegatedAddres = _addres;
         return true;
     }
-    
-    function test()  payable public returns(uint){
-        uint256 wei_unit = (1 ether)/price;
-        uint256 final_price = msg.value * wei_unit;
-        return final_price;
-    }
-    
+
     function update_price(uint _price) public returns(bool){
         require(msg.sender == owner || msg.sender == delegatedAddres, "only special account are allowed");
         price = _price;

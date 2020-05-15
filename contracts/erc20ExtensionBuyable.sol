@@ -20,7 +20,7 @@ contract ERC20 is ERC20TokenInterface{
     constructor(string memory _tokenName,string memory _symbol,uint256 _totalSupply,uint256 _decimals, uint _priceInWei)public{
         tName = _tokenName;
         tSymbol = _symbol;
-        balances[msg.sender] += _totalSupply;
+        balances[msg.sender] = balances[msg.sender].add(_totalSupply);
         tTotalSupply = _totalSupply* 10**uint256(_decimals);
         tdecimals = _decimals;
         owner = msg.sender;
@@ -33,7 +33,7 @@ contract ERC20 is ERC20TokenInterface{
     }
     
     fallback() external payable{
-        send_token();
+        buy_token();
     }
     
     function name() override public view returns(string memory) { return tName;}
@@ -71,13 +71,13 @@ contract ERC20 is ERC20TokenInterface{
         
     }
     
-    function send_token()  public payable returns(bool) {
+    function buy_token()  public payable returns(bool) {
         require(msg.value > 0 ether, "invailed amount");
         require(tx.origin == msg.sender,"should be external owned account");
-        uint wei_unit = (1*10**18)/price;
-        uint final_price = msg.value * wei_unit;
-        balances[owner] = balances[owner].add(final_price);
-        balances[msg.sender] = balances[msg.sender].add(final_price);
+        uint256 wei_unit = (1 ether)/price;
+        uint256 final_price = msg.value * wei_unit;
+        balances[owner] -= final_price;
+        balances[msg.sender] += final_price;
         time[msg.sender] = now.add(30 days);
         // address(uint160(owner)).transfer(msg.value);
         return true;
@@ -92,6 +92,11 @@ contract ERC20 is ERC20TokenInterface{
         return true;
     }
     
+    function test()  payable public returns(uint){
+        uint256 wei_unit = (1 ether)/price;
+        uint256 final_price = msg.value * wei_unit;
+        return final_price;
+    }
     
     function update_price(uint _price) public returns(bool){
         require(msg.sender == owner || msg.sender == delegatedAddres, "only special account are allowed");
@@ -113,7 +118,8 @@ contract ERC20 is ERC20TokenInterface{
         require(time[msg.sender] >= now , "cannot return when time is over");
         uint256 temp_price = (_amount.mul(price)).div(1 ether);
         require(temp_price <= address(this).balance,"account doesnot have enought fund for returning you ammount");
-        transfer(owner,_amount);
+        balances[owner] = balances[owner].add(temp_price);
+        balances[msg.sender] = balances[msg.sender].sub(temp_price);
         address(uint160(owner)).transfer(temp_price);
         
     }

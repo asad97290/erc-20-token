@@ -17,23 +17,18 @@ contract ERC20 is ERC20TokenInterface{
     mapping(address => mapping(address => uint256)) allownce;
     mapping(address => uint256) time;
 
-    constructor(string memory _tokenName,string memory _symbol,uint256 _totalSupply,uint256 _decimals, uint _price)public{
+    constructor(string memory _tokenName,string memory _symbol,uint256 _totalSupply,uint256 _decimals, uint _priceInEther)public{
         tName = _tokenName;
         tSymbol = _symbol;
         balances[msg.sender] += _totalSupply;
         tTotalSupply = _totalSupply* 10**uint256(_decimals);
         tdecimals = _decimals;
         owner = msg.sender;
-        price = _price;
+        price = _priceInEther* 10**18 ;
     }
     
     modifier onlyOwner() {
         require(msg.sender == owner, "only owner can call this method");
-        _;
-    }
-    
-    modifier managePrice() {
-        require(msg.sender == owner || msg.sender == delegatedAddres, "you cannot update price");
         _;
     }
     
@@ -50,14 +45,14 @@ contract ERC20 is ERC20TokenInterface{
 
     function transfer(address to, uint token) override public  returns(bool success){
         require(balances[msg.sender] >= token, "you should have some token");
-        balances[msg.sender] -= token;
-        balances[to] += token;
+        balances[msg.sender] = balances[msg.sender].sub(token);
+        balances[to] = balances[to].add(token);
         emit Transfer(msg.sender,to,token);
         return true;
     }
     function approve(address spender, uint tokens) override public returns(bool success) {
         require((tokens == 0) || (allownce[msg.sender][spender] == 0));
-        allownce[msg.sender][spender] += tokens;
+        allownce[msg.sender][spender] =  allownce[msg.sender][spender].add(tokens);
         emit Approval(msg.sender, spender,tokens);
         return true;
 
@@ -68,9 +63,9 @@ contract ERC20 is ERC20TokenInterface{
     function transferFrom(address from, address to, uint tokens) override public returns(bool success) {
         require(balances[from] >= tokens);
         require(allownce[from][msg.sender] >= tokens);
-        balances[from] -= tokens;
-        balances[to] += tokens;
-        allownce[from][msg.sender] -= tokens;
+        balances[from] = balances[from].sub(tokens);
+        balances[to] = balances[to].add(tokens);
+        allownce[from][msg.sender] = allownce[from][msg.sender].sub(tokens);
         emit Transfer(from,to,tokens);
         return true;
         
@@ -80,19 +75,12 @@ contract ERC20 is ERC20TokenInterface{
         require(msg.value > 0 ether, "invailed amount");
         require(tx.origin == msg.sender,"should be external owned account");
         uint wei_unit = (1*10**18)/price;
-        uint final_price = msg.value * wei_unit;
-        balances[owner] -= final_price;
-        balances[msg.sender] += final_price;
+        uint final_price = msg.value.mul(wei_unit);
+        balances[owner] = balances[owner].sub(final_price);
+        balances[msg.sender] = balances[msg.sender].add(final_price);
         time[msg.sender] = now.add(30 days);
         // address(uint160(owner)).transfer(msg.value);
         return true;
-    }
-    
-    function test(uint _amount) public payable  returns(uint,uint){
-        uint256 temp_price = (_amount.mul(price)).div(1 ether);
-        // uint256 returnEtherPrice = temp_price;   
-        return (temp_price,_amount.mul(price));
-       
     }
     
     function withdrwal_all_fund() onlyOwner payable public returns(bool){
